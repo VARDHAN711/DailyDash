@@ -13,7 +13,7 @@ Users can transport their packages from their location to a desired destination 
 ### Frontend  
 - HTML, CSS, React  
 ### Backend  
-- Node.js, Express, JavaScript  
+- Node.js, Express.js  
 ### Database  
 - MongoDB  
 
