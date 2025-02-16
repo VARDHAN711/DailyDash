@@ -1,0 +1,28 @@
+{
+  "name": "dailydash",
+  "version": "1.0.0",
+  "description": "a simple package delivery webapp",
+  "homepage": "https://github.com/VARDHAN711/DailyDash#readme",
+  "bugs": {
+    "url": "https://github.com/VARDHAN711/DailyDash/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VARDHAN711/DailyDash.git"
+  },
+  "license": "ISC",
+  "author": "Mourya Vardhan B K",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "express": "^4.21.2",
+    "mongodb": "^6.13.0",
+    "mongoose": "^8.10.1",
+    "node": "^23.8.0",
+    "nodemon": "^3.1.9"
+  }
+}
