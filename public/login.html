@@ -39,7 +39,8 @@
                 <label for="chk" aria-hidden="true">Sign up</label>
                 <input type="email" name="email" placeholder="Email" id="signupEmail" required>
                 <div class="password-container">
-                    <input type="password" name="pswd" placeholder="Password" id="signupPassword" required>
+                    <input type="password" name="pswd" placeholder="Password" minlength="10" id="signupPassword"
+                        required>
                     <span class="toggle-password" onclick="togglePassword('signupPassword', this)"><i
                             class="fa-regular fa-eye-slash"></i></span>
                 </div>
@@ -52,8 +53,9 @@
                 <label for="chk" aria-hidden="true">Login</label>
                 <input type="email" name="email" placeholder="Email" id="signinEmail" required>
                 <div class="password-container">
-                    <input type="password" name="pswd" placeholder="Password" id="signinPassword" required>
-                    <span class="toggle-password" onclick="togglePassword('loginPassword', this)"><i
+                    <input type="password" name="pswd" placeholder="Password" id="signinPassword" minlength="10"
+                        required>
+                    <span class="toggle-password" onclick="togglePassword('signinPassword', this)"><i
                             class="fa-regular fa-eye-slash"></i></span>
                 </div>
                 <button type="submit">Login</button>
@@ -68,7 +70,7 @@
         const email = document.getElementById("signupEmail").value;
         const password = document.getElementById("signupPassword").value;
 
-        const response = await fetch("http://localhost:3000/", {
+        const response = await fetch("http://localhost:3000/signup", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
@@ -76,7 +78,32 @@
 
         const data = await response.json();
         alert(data.message);
+
+        if (response.ok) {
+            window.location.href = "/home.html"; // Redirect to homepage after successful signup
+        }
     });
+
+    document.getElementById("loginForm").addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const email = document.getElementById("signinEmail").value;
+        const password = document.getElementById("signinPassword").value;
+
+        const response = await fetch("http://localhost:3000/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+        });
+
+        const data = await response.json();
+        alert(data.message);
+
+        if (response.ok) {
+            window.location.href = "/home.html"; // Redirect to homepage after successful login
+        }
+    });
+
 
     // for toggle password
     function togglePassword(fieldId, icon) {

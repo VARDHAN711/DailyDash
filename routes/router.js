@@ -7,11 +7,9 @@ router.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'login.html'));
 });
 
-
-
-
-
-
+router.get('/home', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public', 'home.html'));
+});
 
 // Export the router to use in app.js
 module.exports = router;
