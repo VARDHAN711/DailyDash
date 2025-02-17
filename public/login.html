@@ -4,7 +4,30 @@
 <head>
     <title>Login</title>
     <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
+    <style>
+        .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-container input {
+            width: 65%;
+            padding-right: 40px;
+            /* Space for the icon */
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 55px;
+            cursor: pointer;
+            user-select: none;
+        }
+    </style>
 </head>
 
 <body>
@@ -12,23 +35,62 @@
         <input type="checkbox" id="chk" aria-hidden="true">
 
         <div class="signup">
-            <form>
+            <form id="signupForm">
                 <label for="chk" aria-hidden="true">Sign up</label>
-                <input type="email" name="email" placeholder="Email" required>
-                <input type="password" name="pswd" placeholder="Password" required>
-                <button>Sign up</button>
+                <input type="email" name="email" placeholder="Email" id="signupEmail" required>
+                <div class="password-container">
+                    <input type="password" name="pswd" placeholder="Password" id="signupPassword" required>
+                    <span class="toggle-password" onclick="togglePassword('signupPassword', this)"><i
+                            class="fa-regular fa-eye-slash"></i></span>
+                </div>
+                <button type="submit">Sign up</button>
             </form>
         </div>
 
         <div class="login">
-            <form>
+            <form id="loginForm">
                 <label for="chk" aria-hidden="true">Login</label>
-                <input type="email" name="email" placeholder="Email" required>
-                <input type="password" name="pswd" placeholder="Password" required>
-                <button>Login</button>
+                <input type="email" name="email" placeholder="Email" id="signinEmail" required>
+                <div class="password-container">
+                    <input type="password" name="pswd" placeholder="Password" id="signinPassword" required>
+                    <span class="toggle-password" onclick="togglePassword('loginPassword', this)"><i
+                            class="fa-regular fa-eye-slash"></i></span>
+                </div>
+                <button type="submit">Login</button>
             </form>
         </div>
     </div>
 </body>
+<script>
+    document.getElementById("signupForm").addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const email = document.getElementById("signupEmail").value;
+        const password = document.getElementById("signupPassword").value;
+
+        const response = await fetch("http://localhost:3000/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+        });
+
+        const data = await response.json();
+        alert(data.message);
+    });
+
+    // for toggle password
+    function togglePassword(fieldId, icon) {
+        const passwordField = document.getElementById(fieldId);
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            icon.innerHTML = `<i class="fa-regular fa-eye"></i>`;
+        } else {
+            passwordField.type = "password";
+            icon.innerHTML = `<i class="fa-regular fa-eye-slash"></i>`;
+        }
+    }
+
+
+</script>
 
 </html>
