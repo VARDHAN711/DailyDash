@@ -80,26 +80,9 @@ app.post("/signup", async (req, res) => {
 
 // Login Route
 app.post("/login", async (req, res) => {
-    const { email, password, captcha } = req.body;
-
-    // Verify reCAPTCHA with Google
-    if (!captcha) {
-        return res.status(400).json({ message: "reCAPTCHA is required!" });
-    }
+    const { email, password } = req.body;
 
     try {
-        const captchaVerification = await fetch("https://www.google.com/recaptcha/api/siteverify", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `secret=${RECAPTCHA_SECRET_KEY}&response=${captcha}`,
-        });
-
-        const captchaData = await captchaVerification.json();
-
-        if (!captchaData.success) {
-            return res.status(400).json({ message: "reCAPTCHA verification failed!" });
-        }
-
         // Check if email exists
         const user = await User.findOne({ email });
         if (!user) {
