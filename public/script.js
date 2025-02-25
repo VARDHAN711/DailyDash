@@ -1,14 +1,24 @@
 document.getElementById("signupForm").addEventListener("submit", async function (event) {
     event.preventDefault();
 
+    const email = document.getElementById("signupEmail").value;
+    const password = document.getElementById("signupPassword").value;
+    const errorMsg = document.getElementById("error-msg1");
+
+    if (password.length < 8) {
+        errorMsg.style.display = "block";
+        return;
+    }
+    else {
+        errorMsg.style.display = "none";
+    }
+
     var captchaResponse = grecaptcha.getResponse(); // Ensure this is only checked for signup
+
     if (captchaResponse.length === 0) {
         alert("Please complete the reCAPTCHA!");
         return;
     }
-
-    const email = document.getElementById("signupEmail").value;
-    const password = document.getElementById("signupPassword").value;
 
     try {
         const response = await fetch("http://localhost:3000/signup", {
@@ -33,6 +43,15 @@ document.getElementById("loginForm").addEventListener("submit", async function (
 
     const email = document.getElementById("signinEmail").value;
     const password = document.getElementById("signinPassword").value;
+    const errorMsg = document.getElementById("error-msg2");
+
+    if (password.length < 8) {
+        errorMsg.style.display = "block";
+        return;
+    }
+    else {
+        errorMsg.style.display = "none";
+    }
 
     try {
         const response = await fetch("http://localhost:3000/login", {
@@ -42,7 +61,6 @@ document.getElementById("loginForm").addEventListener("submit", async function (
         });
 
         const data = await response.json();
-
         if (response.ok) {
             window.location.href = "/home.html"; // Redirect on success
         } else {
