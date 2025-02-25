@@ -5,58 +5,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Page</title>
-    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <div class="container">
-        <div class="slideshow">
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="./home.html" id="logo"><img src="./images/logo.jpg" alt="logo"></a>
+            <a href="./orders.html" id="orders">Orders</a>
+            <a href="#" id="profile"><i class="fa-solid fa-user"></i></a>
+        </div>
+    </nav>
+
+    <div class="slider">
+        <div class="slides">
             <div id="slide-1" class="slide">
-                <a href="#slide-7"></a>
-                <a href="#slide-2"></a>
-                <img src="https://c1.staticflickr.com/9/8724/16310801553_cea90ae63d_n.jpg" />
+                <img src="./images/slide-1.jpg" alt="Fast & Affordable Delivery" />
             </div>
+
             <div id="slide-2" class="slide">
-                <a href="#slide-1"></a>
-                <a href="#slide-3"></a>
-                <img src="https://c2.staticflickr.com/4/3719/19819674272_2384feaaf8_n.jpg" />
+                <img src="./images/slide-2.jpg" alt="Real-Time Tracking" />
             </div>
+
             <div id="slide-3" class="slide">
-                <a href="#slide-2"></a>
-                <a href="#slide-4"></a>
-                <img src="https://c2.staticflickr.com/2/1627/24319275501_3ec6f36fa7_n.jpg" />
+                <img src="./images/slide-3.jpg" alt="Seamless & Easy-to-Use" />
             </div>
+
             <div id="slide-4" class="slide">
-                <a href="#slide-3"></a>
-                <a href="#slide-5"></a>
-                <img src="https://c2.staticflickr.com/2/1460/25194537936_e3c54faefc_n.jpg" />
-            </div>
-            <div id="slide-5" class="slide">
-                <a href="#slide-4"></a>
-                <a href="#slide-6"></a>
-                <img src="https://c2.staticflickr.com/2/1460/26216238325_9c425923a7_n.jpg" />
-            </div>
-            <div id="slide-6" class="slide">
-                <a href="#slide-5"></a>
-                <a href="#slide-7"></a>
-                <img src="https://c2.staticflickr.com/8/7578/26194232483_8204bf119b_n.jpg" />
-            </div>
-            <div id="slide-7" class="slide">
-                <a href="#slide-6"></a>
-                <a href="#slide-1"></a>
-                <img src="https://c2.staticflickr.com/8/7106/26862741906_d5283c42ba_n.jpg" />
+                <img src="./images/slide-4.png" alt="Safe & Secure Transactions" />
             </div>
         </div>
-        <div class="pagination">
-            <a href="#slide-1"><span>1</span></a>
-            <a href="#slide-2"><span>2</span></a>
-            <a href="#slide-3"><span>3</span></a>
-            <a href="#slide-4"><span>4</span></a>
-            <a href="#slide-5"><span>5</span></a>
-            <a href="#slide-6"><span>6</span></a>
-            <a href="#slide-7"><span>7</span></a>
-        </div>
+        <!-- Arrows for manual control -->
+        <button class="next" onclick="nextSlide()">&#10095;</button>
+        <button class="prev" onclick="prevSlide()">&#10094;</button>
     </div>
+
+    <button id="ordernow">Order Now</button>
+
+    <script src="./script.js"></script>
+    <script>
+        // for slides in home page
+        let index = 0;
+        const slides = document.querySelector('.slides');
+        const totalSlides = document.querySelectorAll('.slide').length;
+
+        function updateSlide() {
+            slides.style.transform = `translateX(-${index * (100 / totalSlides)}%)`;
+        }
+
+        function nextSlide() {
+            if (index < totalSlides - 1) {
+                index++;
+            } else {
+                index = 0; // Loop back to first slide
+            }
+            updateSlide();
+        }
+
+        function prevSlide() {
+            if (index > 0) {
+                index--;
+            } else {
+                index = totalSlides - 1; // Loop back to last slide
+            }
+            updateSlide();
+        }
+
+        // Auto slide every 3 seconds
+        setInterval(nextSlide, 3000);
+
+        // order now btn
+        const orderbtn = document.getElementById("ordernow");
+        orderbtn.addEventListener('click', () => {
+            window.location.href = "./ordernow.html";
+        })
+
+    </script>
 </body>
 
 </html>
