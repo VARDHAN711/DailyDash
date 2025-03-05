@@ -5,10 +5,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="./home.html" id="logo"><img src="./images/logo.jpg" alt="logo"></a>
+            <a href="./orders.html" id="orders">Orders</a>
+            <a href="#" id="profile"><i class="fa-solid fa-user"></i></a>
+        </div>
+    </nav>
 
+    <div class="slider">
+        <div class="slides">
+            <div id="slide-1" class="slide">
+                <img src="./images/slide-1.jpg" alt="Fast & Affordable Delivery" />
+            </div>
+
+            <div id="slide-2" class="slide">
+                <img src="./images/slide-2.jpg" alt="Real-Time Tracking" />
+            </div>
+
+            <div id="slide-3" class="slide">
+                <img src="./images/slide-3.jpg" alt="Seamless & Easy-to-Use" />
+            </div>
+
+            <div id="slide-4" class="slide">
+                <img src="./images/slide-4.png" alt="Safe & Secure Transactions" />
+            </div>
+        </div>
+        <!-- Arrows for manual control -->
+        <button class="next" onclick="nextSlide()">&#10095;</button>
+        <button class="prev" onclick="prevSlide()">&#10094;</button>
+    </div>
+
+    <button id="ordernow">Order Now</button>
+
+    <script src="./script.js"></script>
+    <script>
+        // for slides in home page
+        let index = 0;
+        const slides = document.querySelector('.slides');
+        const totalSlides = document.querySelectorAll('.slide').length;
+
+        function updateSlide() {
+            slides.style.transform = `translateX(-${index * (100 / totalSlides)}%)`;
+        }
+
+        function nextSlide() {
+            if (index < totalSlides - 1) {
+                index++;
+            } else {
+                index = 0; // Loop back to first slide
+            }
+            updateSlide();
+        }
+
+        function prevSlide() {
+            if (index > 0) {
+                index--;
+            } else {
+                index = totalSlides - 1; // Loop back to last slide
+            }
+            updateSlide();
+        }
+
+        // Auto slide every 3 seconds
+        setInterval(nextSlide, 3000);
+
+        // order now btn
+        const orderbtn = document.getElementById("ordernow");
+        orderbtn.addEventListener('click', () => {
+            window.location.href = "./ordernow.html";
+        })
+
+    </script>
 </body>
 
 </html>
