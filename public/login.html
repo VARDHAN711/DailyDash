@@ -3,11 +3,13 @@
 
 <head>
     <title>Login</title>
-    <link rel="stylesheet" href="login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
         integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="login.css">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
     <style>
         .password-container {
             position: relative;
@@ -37,11 +39,21 @@
         <div class="signup">
             <form id="signupForm">
                 <label for="chk" aria-hidden="true">Sign up</label>
-                <input type="email" name="email" placeholder="Email" id="signupEmail" required>
+                <input type="email" name="email" placeholder="Email" id="signupEmail"
+                    pattern=".+@(gmail\.com|dsu\.edu\.in)" required>
+
                 <div class="password-container">
-                    <input type="password" name="pswd" placeholder="Password" id="signupPassword" required>
+                    <input type="password" name="pswd" placeholder="Password" min="8" minlength="8" id="signupPassword"
+                        required>
                     <span class="toggle-password" onclick="togglePassword('signupPassword', this)"><i
                             class="fa-regular fa-eye-slash"></i></span>
+                </div>
+                <p id="error-msg1" style="color: red; display:none;margin-left:50px">Password must be at least 8
+                    characters long</p>
+
+                <div class="captcha">
+                    <div class="g-recaptcha" data-sitekey="6Leq59oqAAAAAEl2Wk3srUOD4ascXa2lwMHVLsph" id="Scaptcha" a>
+                    </div>
                 </div>
                 <button type="submit">Sign up</button>
             </form>
@@ -50,47 +62,24 @@
         <div class="login">
             <form id="loginForm">
                 <label for="chk" aria-hidden="true">Login</label>
-                <input type="email" name="email" placeholder="Email" id="signinEmail" required>
+                <input type="email" name="email" placeholder="Email" id="signinEmail"
+                    pattern=".+@(gmail\.com|dsu\.edu\.in)" required>
+
                 <div class="password-container">
-                    <input type="password" name="pswd" placeholder="Password" id="signinPassword" required>
-                    <span class="toggle-password" onclick="togglePassword('loginPassword', this)"><i
+                    <input type="password" name="pswd" placeholder="Password" id="signinPassword" min="8" minlength="8"
+                        required>
+                    <span class="toggle-password" onclick="togglePassword('signinPassword', this)"><i
                             class="fa-regular fa-eye-slash"></i></span>
                 </div>
+                <p id="error-msg2" style="color: red; display:none;margin-left:50px">Password must be at least 8
+                    characters
+                    long</p>
+
                 <button type="submit">Login</button>
             </form>
         </div>
     </div>
 </body>
-<script>
-    document.getElementById("signupForm").addEventListener("submit", async function (event) {
-        event.preventDefault();
-
-        const email = document.getElementById("signupEmail").value;
-        const password = document.getElementById("signupPassword").value;
-
-        const response = await fetch("http://localhost:3000/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
-        });
-
-        const data = await response.json();
-        alert(data.message);
-    });
-
-    // for toggle password
-    function togglePassword(fieldId, icon) {
-        const passwordField = document.getElementById(fieldId);
-        if (passwordField.type === "password") {
-            passwordField.type = "text";
-            icon.innerHTML = `<i class="fa-regular fa-eye"></i>`;
-        } else {
-            passwordField.type = "password";
-            icon.innerHTML = `<i class="fa-regular fa-eye-slash"></i>`;
-        }
-    }
-
-
-</script>
+<script src="script.js"></script>
 
 </html>

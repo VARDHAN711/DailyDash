@@ -1,6 +1,6 @@
-# DailyDash 🚀  
+# Veloxis 🚀  
 
-DailyDash is a website that provides a **fast and cost-efficient delivery service** for users.  
+Veloxis is a website that provides a **fast and cost-efficient delivery service** for users.  
 Users can transport their packages from their location to a desired destination **seamlessly**.  
 
 ## ✨ Features  
