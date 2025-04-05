@@ -147,3 +147,76 @@ body {
     color: red;
     border-color: red;
 }
+
+/* Profile Page */
+.center-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 100px); /* Full height minus navbar */
+    padding: 40px 20px;
+}
+
+.profile-container {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 30px 40px;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 15px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    text-align: left;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.profile-container h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: white;
+}
+
+.profile-container p {
+    font-size: 16px;
+    margin: 10px 0;
+    color: #f0f0f0;
+}
+
+.proInp {
+    font-weight: bold;
+    color: #ffffff;
+}
+
+#editBtn,
+#logoutBtn,
+#editProfileForm button {
+    background: #ffffff;
+    color: #000428;
+    font-weight: 600;
+    margin-top: 15px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#editBtn:hover,
+#logoutBtn:hover,
+#editProfileForm button:hover {
+    background: #80d0ff;
+    color: #000;
+}
+
+/* Edit Form */
+#editProfileForm input {
+    padding: 10px;
+    margin: 7px 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 100%;
+    font-size: 15px;
+    background: #ffffff;
+    color: #000;
+}
+#editProfileForm label{
+    color: white;
+}

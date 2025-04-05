@@ -51,6 +51,15 @@
 
     <script src="./script.js"></script>
     <script>
+        // Check for JWT token
+        const token = localStorage.getItem("token");
+
+        // If no token, redirect to login
+        if (!token) {
+            window.location.href = "/login.html";
+        }
+
+
         // for slides in home page
         let index = 0;
         const slides = document.querySelector('.slides');

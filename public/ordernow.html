@@ -21,6 +21,18 @@
         </div>
     </nav>
     Order now
+    <script>
+        // Check for JWT token
+        const token = localStorage.getItem("token");
+
+        // If no token, redirect to login
+        if (!token) {
+            window.location.href = "/login.html";
+        }
+
+        // Optional: verify token with server (extra security)
+    </script>
+
 </body>
 
 </html>
