@@ -20,6 +20,38 @@
             <a href="./profile.html" id="profile"><i class="fa-solid fa-user"></i></a>
         </div>
     </nav>
+    <div class="profile-body">
+        <div class="center-wrapper">
+            <div class="profile-container">
+                <h2 id="proH2">Profile</h2>
+                <p>Username: <span id="display-username" class="proInp"></span></p>
+                <p>Email: <span id="display-email" class="proInp"></span></p>
+                <p>Phone: <span id="display-phone" class="proInp"></span></p>
+                <button id="editBtn">Edit Profile</button>
+                <br />
+                <button id="logoutBtn">Logout</button>
+            </div>
+
+            <form id="editProfileForm" style="display: none; margin-top: 20px;" class="profile-container">
+                <label>Email: </label>
+                <input type="email" id="email" required /><br /><br />
+
+                <label>Username: </label>
+                <input type="text" id="username" /><br /><br />
+
+                <label>Phone: </label>
+                <input type="text" id="phone" /><br /><br />
+
+                <label>New Password: </label>
+                <input type="password" id="password" /><br /><br />
+
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
 </body>
 
 </html>
