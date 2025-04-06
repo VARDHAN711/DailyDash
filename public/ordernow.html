@@ -9,6 +9,17 @@
         integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="styles.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Geocoder CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Geocoder JS -->
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+
 </head>
 
 <body>
@@ -20,17 +31,319 @@
             <a href="./profile.html" id="profile"><i class="fa-solid fa-user"></i></a>
         </div>
     </nav>
-    Order now
+
+
+    <!-- Package Info Step -->
+    <div class="order-form-container">
+        <h2>Place Your Order</h2>
+        <div id="packageStep">
+            <label for="packageId">Package ID:</label>
+            <input type="text" id="packageId" readonly />
+
+            <label for="packageType">Package Type:</label>
+            <select id="packageType">
+                <option value="" disabled selected>Select Package Type</option>
+                <option value="Documents">Documents</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Groceries">Groceries</option>
+                <option value="Clothes">Clothes</option>
+                <option value="Others">Others</option>
+            </select>
+
+            <button onclick="goToMapStep()">Next</button>
+        </div>
+    </div>
+
+    <!-- Map Step -->
+    <div id="mapStep" class="step-container map-step-container" style="display: none;">
+        <div class="map-section">
+            <h2 style="text-align: center; margin-bottom: 20px;">Select Pickup & Drop Locations</h2>
+
+            <label for="pickup">Pickup Location:</label>
+            <input type="text" id="pickup" placeholder="Search or click on map" />
+
+            <label for="drop">Drop Location:</label>
+            <input type="text" id="drop" placeholder="Search or click on map" />
+
+            <div id="map" style="height: 400px; margin-top: 20px;"></div>
+
+            <button id="calculateBtn" onclick="calculate()">Calculate Cost</button>
+
+            <div id="distanceOutput" style="margin-top: 10px;"></div>
+            <div id="costOutput" style="margin-top: 5px;"></div>
+
+            <!-- Order Action Section -->
+            <div id="orderActions" style="margin-top: 20px; display: none;">
+                <button onclick="placeOrder()">Order Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Status -->
+    <div id="statusScreen" style="display: none; text-align: center; margin-top: 40px;">
+        <h2 id="orderMsg">Order Placed Successfully 🚚</h2>
+        <p id="timer">Delivery in 30s...</p>
+    </div>
+
     <script>
         // Check for JWT token
         const token = localStorage.getItem("token");
 
         // If no token, redirect to login
         if (!token) {
-            window.location.href = "/login.html";
+            window.location.href = "login.html";
         }
 
-        // Optional: verify token with server (extra security)
+        let pickupMarker, dropMarker;
+        let pickupLatLng = null;
+        let dropLatLng = null;
+
+
+        const map = L.map('map').setView([20.5937, 78.9629], 5);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+        }).addTo(map);
+
+        // generate package id
+        function generatePackageId() {
+            const timestamp = Date.now();
+            const random = Math.floor(Math.random() * 1000);
+            return `PKG${timestamp}${random}`;
+        }
+
+        // Add search bar
+        const geocoder = L.Control.geocoder({
+            defaultMarkGeocode: false
+        })
+            .on('markgeocode', function (e) {
+                const latlng = e.geocode.center;
+                map.setView(latlng, 15);
+                if (!pickupLatLng) {
+                    setPickup(latlng);
+                } else {
+                    setDrop(latlng);
+                }
+            })
+            .addTo(map);
+
+        let clickCount = 0;
+
+        map.on('click', function (e) {
+            if (clickCount === 0) {
+                pickupLatLng = e.latlng;
+                L.marker(pickupLatLng).addTo(map).bindPopup("Pickup").openPopup();
+                clickCount++;
+            } else if (clickCount === 1) {
+                dropLatLng = e.latlng;
+                L.marker(dropLatLng).addTo(map).bindPopup("Drop").openPopup();
+                clickCount++;
+            }
+        });
+
+
+        function setPickup(latlng) {
+            if (pickupMarker) map.removeLayer(pickupMarker);
+            pickupMarker = L.marker(latlng, {
+                icon: L.icon({
+                    iconUrl: 'https://cdn-icons-png.flaticon.com/512/484/484167.png', // red pin
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 32],
+                })
+            }).addTo(map).bindPopup("Pickup").openPopup();
+            pickupLatLng = latlng;
+            reverseGeocode(latlng, 'pickup');
+        }
+
+        function setDrop(latlng) {
+            if (dropMarker) map.removeLayer(dropMarker);
+            dropMarker = L.marker(latlng, {
+                icon: L.icon({
+                    iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png', // blue pin
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 32],
+                })
+            }).addTo(map).bindPopup("Drop").openPopup();
+            dropLatLng = latlng;
+            reverseGeocode(latlng, 'drop');
+        }
+
+
+        async function reverseGeocode(latlng, type) {
+            const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latlng.lat}&lon=${latlng.lng}&accept-language=en`;
+
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                const address = data.display_name || `${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`;
+                if (type === 'pickup') {
+                    document.getElementById("pickup").value = address;
+                } else {
+                    document.getElementById("drop").value = address;
+                }
+            } catch (error) {
+                console.error("Reverse geocoding failed:", error);
+            }
+        }
+
+        async function calculate() {
+            const pickupText = document.getElementById("pickup").value.trim();
+            const dropText = document.getElementById("drop").value.trim();
+
+            if (!pickupText || !dropText) {
+                alert("Please enter both pickup and drop locations.");
+                return;
+            }
+
+            const pickupCoords = await geocodeAddress(pickupText);
+            const dropCoords = await geocodeAddress(dropText);
+
+            if (!pickupCoords || !dropCoords) {
+                alert("Could not find one or both locations.");
+                return;
+            }
+
+            const distance = pickupCoords.distanceTo(dropCoords) / 1000;
+            const cost = distance * 10;
+
+            document.getElementById("distanceOutput").innerText = `Distance: ${distance.toFixed(2)} km`;
+            document.getElementById("costOutput").innerText = `Cost: ₹${cost.toFixed(2)}`;
+
+            // Show "Order Now" button
+            document.getElementById("orderActions").style.display = "block";
+        }
+
+        // Forward Geocoding (name → coordinates)
+        async function geocodeAddress(address) {
+            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1&accept-language=en`;
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                if (data && data.length > 0) {
+                    return L.latLng(data[0].lat, data[0].lon);
+                }
+                return null;
+            } catch (error) {
+                console.error("Geocoding error:", error);
+                return null;
+            }
+        }
+
+        function animateMarker(from, to, marker, duration = 30000) {
+            let startTime = null;
+
+            function step(timestamp) {
+                if (!startTime) startTime = timestamp;
+                const progress = (timestamp - startTime) / duration;
+
+                if (progress < 1) {
+                    const lat = from.lat + (to.lat - from.lat) * progress;
+                    const lng = from.lng + (to.lng - from.lng) * progress;
+                    marker.setLatLng([lat, lng]);
+                    requestAnimationFrame(step);
+                } else {
+                    marker.setLatLng(to);
+                    document.getElementById("orderMsg").innerText = "Delivered ✅";
+                    document.getElementById("timer").innerText = "Redirecting to your Orders page...";
+                    setTimeout(() => {
+                        window.location.href = "./orders.html";
+                    }, 2000);
+                }
+            }
+
+            requestAnimationFrame(step);
+        }
+
+        function goToMapStep() {
+            const packageId = document.getElementById("packageId").value.trim();
+            const packageType = document.getElementById("packageType").value;
+
+            if (!packageId || !packageType) {
+                alert("Please enter both Package ID and Package Type.");
+                return;
+            }
+
+            // Store these values in case you want to send to backend later
+            localStorage.setItem("packageId", packageId);
+            localStorage.setItem("packageType", packageType);
+
+            // Hide step 1 and show step 2
+            document.getElementById("packageStep").style.display = "none";
+            document.getElementById("mapStep").style.display = "block";
+        }
+
+        async function placeOrder() {
+            // Use typed addresses if map clicks weren't used
+            if (!pickupLatLng) {
+                const pickupText = document.getElementById("pickup").value.trim();
+                if (pickupText) {
+                    pickupLatLng = await geocodeAddress(pickupText);
+                    setPickup(pickupLatLng); // also adds visible marker
+                }
+            }
+
+            if (!dropLatLng) {
+                const dropText = document.getElementById("drop").value.trim();
+                if (dropText) {
+                    dropLatLng = await geocodeAddress(dropText);
+                    setDrop(dropLatLng); // also adds visible marker
+                }
+            }
+
+            if (!pickupLatLng || !dropLatLng) {
+                alert("Please provide both pickup and drop locations.");
+                return;
+            }
+
+            // Hide form UI
+            document.getElementById("pickup").style.display = "none";
+            document.getElementById("drop").style.display = "none";
+            document.querySelector("label[for='pickup']").style.display = "none";
+            document.querySelector("label[for='drop']").style.display = "none";
+            document.getElementById("orderActions").style.display = "none";
+            document.querySelector("button[onclick='calculate()']").style.display = "none";
+            document.getElementById("distanceOutput").style.display = "none";
+            document.getElementById("costOutput").style.display = "none";
+
+            // Show order status
+            document.getElementById("statusScreen").style.display = "block";
+            document.getElementById("orderMsg").innerText = "Order is on the way...";
+            document.getElementById("timer").style.display = "block";
+
+            startCountdown(30); // ⏳ start timer
+
+            // Add animated delivery marker
+            const deliveryMarker = L.marker(pickupLatLng, {
+                icon: L.icon({
+                    iconUrl: 'https://cdn-icons-png.flaticon.com/512/744/744465.png', // 🛻 truck
+                    iconSize: [50, 50],
+                    iconAnchor: [25, 25],
+                })
+            }).addTo(map);
+
+            animateMarker(pickupLatLng, dropLatLng, deliveryMarker, 30000);
+        }
+
+        function startCountdown(seconds) {
+            let remaining = seconds;
+
+            const timerInterval = setInterval(() => {
+                if (remaining > 0) {
+                    document.getElementById("timer").innerText = `Time remaining: ${remaining--}s`;
+                } else {
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const pkgInput = document.getElementById('packageId');
+            if (pkgInput) {
+                pkgInput.value = generatePackageId();
+                pkgInput.readOnly = true;
+            }
+        });
+
     </script>
 
 </body>

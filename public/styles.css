@@ -220,3 +220,194 @@ body {
 #editProfileForm label{
     color: white;
 }
+
+/* Order now page */
+.order-form-container {
+    font-family: 'Segoe UI', sans-serif;
+    background: #f5f7fa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    max-width: 450px;
+    margin: 20px auto;
+  }
+  
+  .order-form-container label {
+    display: block;
+    margin-top: 15px;
+    font-weight: 600;
+    color: #444;
+    width: 100%;
+  }
+  
+  .order-form-container input[type="text"],
+  .order-form-container select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+  
+  .step-container {
+    width: 100%;
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  .step-container.active {
+    display: block;
+  }
+  
+  .order-form-container #distanceOutput,
+  .order-form-container #costOutput {
+    margin-top: 8px;
+    font-size: 16px;
+    color: #222;
+    background: #eaf2ff;
+    padding: 10px;
+    border-radius: 8px;
+    width: 100%;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+  }
+  
+  .order-form-container button {
+    margin-top: 20px;
+    padding: 12px 24px;
+    font-size: 16px;
+    background-color: #3e8ef7;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    width: 100%;
+  }
+  
+  .order-form-container button:hover {
+    background-color: #2b6cd4;
+  }
+  
+  #orderActions {
+    display: none;
+    width: 100%;
+    margin-top: 20px;
+    text-align: center;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  #orderActions button {
+    padding: 12px 24px;
+    width: 100%;
+    background-color: #28a745;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  #orderActions button:hover {
+    background-color: #218838;
+  }
+  
+  #statusScreen {
+    display: none;
+    margin: 20px auto;
+    width: 40%;
+    text-align: center;
+    background: #eafaf1;
+    border: 1px solid #c6efd8;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    animation: fadeIn 0.4s ease-in-out;
+  }
+  
+  #statusScreen h2 {
+    font-size: 22px;
+    color: #28a745;
+    margin-bottom: 10px;
+  }
+  
+  #statusScreen p {
+    font-size: 16px;
+    color: #444;
+  }
+  
+  .map-step-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 40px 20px;
+  }
+  
+  .map-section {
+    width: 100%;
+    max-width: 900px;
+    background: #ffffff;
+    padding: 30px;
+    margin: 0 auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  } 
+  
+  .map-section label {
+    font-weight: 600;
+    color: #333;
+    margin-top: 15px;
+    display: block;
+  }
+  
+  .map-section input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin: 0 auto;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+  
+  #map {
+    width: 100%;
+    height: 400px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .map-section button {
+    width: 100%;
+    margin: 20px auto;
+    padding: 12px 24px;
+    font-size: 16px;
+    background-color: #3e8ef7;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .map-section button:hover {
+    background-color: #2b6cd4;
+  }
+  
+  /* Optional fade-in animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
