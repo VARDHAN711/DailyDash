@@ -97,14 +97,24 @@
         let pickupMarker, dropMarker;
         let pickupLatLng = null;
         let dropLatLng = null;
+        let lastFocusedInput = null;
+
+        // Track focus to know whether to set pickup or drop
+        document.getElementById("pickup").addEventListener("focus", () => {
+            lastFocusedInput = 'pickup';
+        });
+        document.getElementById("drop").addEventListener("focus", () => {
+            lastFocusedInput = 'drop';
+        });
 
 
-        const map = L.map('map').setView([12.9716, 77.5946], 13); // Bangalore with zoom 13
-
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 18,
+        const map = L.map('map').setView([12.9716, 77.5946], 13); // You can change the center
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap &copy; CartoDB',
+            subdomains: 'abcd',
+            maxZoom: 19
         }).addTo(map);
+
 
         // generate package id
         function generatePackageId() {
@@ -131,17 +141,16 @@
         let clickCount = 0;
 
         map.on('click', function (e) {
-            if (clickCount === 0) {
-                pickupLatLng = e.latlng;
-                L.marker(pickupLatLng).addTo(map).bindPopup("Pickup").openPopup();
-                clickCount++;
-            } else if (clickCount === 1) {
-                dropLatLng = e.latlng;
-                L.marker(dropLatLng).addTo(map).bindPopup("Drop").openPopup();
-                clickCount++;
+            if (lastFocusedInput === 'pickup') {
+                setPickup(e.latlng);
+            } else if (lastFocusedInput === 'drop') {
+                setDrop(e.latlng);
+            } else if (!pickupLatLng) {
+                setPickup(e.latlng);
+            } else if (!dropLatLng) {
+                setDrop(e.latlng);
             }
         });
-
 
         function setPickup(latlng) {
             if (pickupMarker) map.removeLayer(pickupMarker);
@@ -271,6 +280,8 @@
             // Hide step 1 and show step 2
             document.getElementById("packageStep").style.display = "none";
             document.getElementById("mapStep").style.display = "block";
+            document.getElementById("pickup").focus(); // so user starts with pickup
+
         }
 
         async function placeOrder() {
