@@ -20,15 +20,83 @@
             <a href="./profile.html" id="profile"><i class="fa-solid fa-user"></i></a>
         </div>
     </nav>
-    <p style="color: white;">order</p>
-    <script>
-        // Check for JWT token
-        const token = localStorage.getItem("token");
+    <main class="orders-section">
+        <h2>Your Orders</h2>
+        <div id="orders-container" class="orders-container">
+            <!-- Example headings layout -->
+            <div class="orders-headings">
+                <span>Package ID</span>
+                <span>Package Type</span>
+                <span>Pickup Address</span>
+                <span>Drop Address</span>
+                <span>Distance</span>
+                <span>Cost</span>
+                <span>Status</span>
+                <span>Date</span>
+            </div>
 
-        // If no token, redirect to login
-        if (!token) {
-            window.location.href = "/login.html";
-        }
+            <!-- Orders will be added here -->
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+                alert("Not logged in!");
+                window.location.href = "/";
+                return;
+            }
+
+            console.log("Orders script is running");
+
+            fetch("/api/orders", {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Accept": "application/json"
+                }
+            })
+                .then(async res => {
+                    // ✅ Handle non-JSON or redirect responses safely
+                    const contentType = res.headers.get("content-type");
+                    if (!contentType || !contentType.includes("application/json")) {
+                        const text = await res.text();
+                        throw new Error(`Expected JSON, got: ${text.slice(0, 100)}`);
+                    }
+
+                    return res.json();
+                })
+                .then(orders => {
+                    const container = document.getElementById("orders-container");
+
+                    if (!orders || !orders.length) {
+                        container.innerHTML += "<p>No orders found.</p>";
+                        return;
+                    }
+
+                    orders.forEach(order => {
+                        const div = document.createElement("div");
+                        div.classList.add("order-row");
+                        div.innerHTML = `
+                        <span>${order.packageId}</span>
+                        <span>${order.packageType}</span>
+                        <span>${order.pickupAddress}</span>
+                        <span>${order.dropAddress}</span>
+                        <span>${order.distance.toFixed(2)} km</span>
+                        <span>₹${order.cost.toFixed(2)}</span>
+                        <span>${order.status}</span>
+                        <span>${new Date(order.orderedAt).toLocaleString()}</span>
+                    `;
+                        container.appendChild(div);
+                    });
+                })
+                .catch(err => {
+                    console.error("Failed to fetch orders:", err.message);
+                    alert("Could not load orders. Please try again.");
+                });
+        });
     </script>
 
 </body>
