@@ -6,6 +6,10 @@ const cors = require("cors");
 
 const port = 3000;
 const app = express();
+app.use((req, res, next) => {
+    console.log(`➡️ ${req.method} request to ${req.url}`);
+    next();
+});
 
 require('dotenv').config();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -14,9 +18,13 @@ const JWT_SECRET = process.env.JWT_SECRET;
 app.use(cors());
 app.use(bodyParser.json());
 
+// for using profile logic
 const profileRoutes = require("./routes/profile");
 app.use("/api/profile", profileRoutes);
 
+// for using order logic
+const orderRoutes = require('./routes/order');
+app.use('/api', orderRoutes);
 
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));

@@ -285,20 +285,26 @@
         }
 
         async function placeOrder() {
-            // Use typed addresses if map clicks weren't used
+            const pickupInput = document.getElementById("pickup");
+            const dropInput = document.getElementById("drop");
+            const packageId = document.getElementById("packageId").value.trim();
+            const packageType = document.getElementById("packageType").value;
+            const token = localStorage.getItem("token");
+
+            // Geocode if coordinates not set via map
             if (!pickupLatLng) {
-                const pickupText = document.getElementById("pickup").value.trim();
+                const pickupText = pickupInput.value.trim();
                 if (pickupText) {
                     pickupLatLng = await geocodeAddress(pickupText);
-                    setPickup(pickupLatLng); // also adds visible marker
+                    setPickup(pickupLatLng);
                 }
             }
 
             if (!dropLatLng) {
-                const dropText = document.getElementById("drop").value.trim();
+                const dropText = dropInput.value.trim();
                 if (dropText) {
                     dropLatLng = await geocodeAddress(dropText);
-                    setDrop(dropLatLng); // also adds visible marker
+                    setDrop(dropLatLng);
                 }
             }
 
@@ -307,33 +313,67 @@
                 return;
             }
 
-            // Hide form UI
-            document.getElementById("pickup").style.display = "none";
-            document.getElementById("drop").style.display = "none";
-            document.querySelector("label[for='pickup']").style.display = "none";
-            document.querySelector("label[for='drop']").style.display = "none";
-            document.getElementById("orderActions").style.display = "none";
-            document.querySelector("button[onclick='calculate()']").style.display = "none";
-            document.getElementById("distanceOutput").style.display = "none";
-            document.getElementById("costOutput").style.display = "none";
+            const pickupAddress = pickupInput.value.trim();
+            const dropAddress = dropInput.value.trim();
+            const distance = (pickupLatLng.distanceTo(dropLatLng) / 1000);
+            const cost = (distance * 10);
 
-            // Show order status
-            document.getElementById("statusScreen").style.display = "block";
-            document.getElementById("orderMsg").innerText = "Order is on the way...";
-            document.getElementById("timer").style.display = "block";
+            // Send order to backend
+            try {
+                const response = await fetch("/api/order", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        packageId,
+                        packageType,
+                        pickupAddress,
+                        dropAddress,
+                        distance,
+                        cost
+                    })
+                });
 
-            startCountdown(30); // ⏳ start timer
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || "Order placement failed");
+                }
 
-            // Add animated delivery marker
-            const deliveryMarker = L.marker(pickupLatLng, {
-                icon: L.icon({
-                    iconUrl: 'https://cdn-icons-png.flaticon.com/512/744/744465.png', // 🛻 truck
-                    iconSize: [50, 50],
-                    iconAnchor: [25, 25],
-                })
-            }).addTo(map);
+                // Hide form UI
+                ["pickup", "drop"].forEach(id => {
+                    document.getElementById(id).style.display = "none";
+                    document.querySelector(`label[for='${id}']`).style.display = "none";
+                });
+                ["orderActions", "distanceOutput", "costOutput"].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.style.display = "none";
+                });
+                const calculateBtn = document.querySelector("button[onclick='calculate()']");
+                if (calculateBtn) calculateBtn.style.display = "none";
 
-            animateMarker(pickupLatLng, dropLatLng, deliveryMarker, 30000);
+                // Show status screen
+                document.getElementById("statusScreen").style.display = "block";
+                document.getElementById("orderMsg").innerText = "Order is on the way...";
+                document.getElementById("timer").style.display = "block";
+                startCountdown(30);
+
+                // Add delivery marker and animate
+                const deliveryMarker = L.marker(pickupLatLng, {
+                    icon: L.icon({
+                        iconUrl: "https://cdn-icons-png.flaticon.com/512/744/744465.png",
+                        iconSize: [50, 50],
+                        iconAnchor: [25, 25],
+                    }),
+                }).addTo(map);
+
+                animateMarker(pickupLatLng, dropLatLng, deliveryMarker, 30000);
+
+            } catch (err) {
+                console.error("Order error:", err.message);
+                alert("Could not place order: " + err.message);
+            }
         }
 
         function startCountdown(seconds) {
