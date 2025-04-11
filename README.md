@@ -1,6 +1,6 @@
 # DailyDash 🚀
 
-**DailyDash** is a web-based platform offering **fast and cost-efficient delivery services**.  
+**DailyDash** is a full-stack web application providing a **fast and cost-efficient delivery services**.  
 Users can seamlessly transport packages from their current location to a selected destination.  
 
 ## ✨ Features
@@ -11,7 +11,7 @@ Users can seamlessly transport packages from their current location to a selecte
 - **Profile Management & Order History** 🧾  
 - **Secure Transactions** 🔒  
 
-## 🛠️ Tech Stack
+## 🛠️ Tech Stack (Full Stack)
 
 ### 🌐 Frontend
 - HTML  
