@@ -6,10 +6,6 @@ const cors = require("cors");
 
 const port = 3000;
 const app = express();
-app.use((req, res, next) => {
-    console.log(`➡️ ${req.method} request to ${req.url}`);
-    next();
-});
 
 require('dotenv').config();
 const JWT_SECRET = process.env.JWT_SECRET;
