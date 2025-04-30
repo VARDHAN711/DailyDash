@@ -5,7 +5,8 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
-const RECAPTCHA_SECRET_KEY = "YOUR-SECRET-KEY";
+require('dotenv').config();
+const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 
 // Auth middleware
 const authenticateToken = require("../middleware/authMiddleware");
