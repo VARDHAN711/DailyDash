@@ -414,6 +414,10 @@ body {
   }
   
 /* orders page */
+#order-heading{
+  color: white;
+  text-align: center;
+}
 .orders-container {
   margin: 2rem;
   display: flex;
